@@ -28,40 +28,54 @@ const Login = () => {
     setErrorMessages({ usernameError: "", emailError: "", passwordError: "" });
   }, [loginMode]);
 
+  const validateField = (name: string, value: string): string => {
+    switch (name) {
+      case "username":
+        if (!/^[a-zA-Z0-9_.]{3,}$/.test(value)) {
+          return "Username must be at least 3 characters long and can include letters, numbers, underscores, and periods.";
+        }
+        break;
+
+      case "email":
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
+          return "Please enter a valid email address in the format name@provider.com.";
+        }
+        break;
+
+      case "password":
+        if (value.length < 6) {
+          return "Password must be at least 6 characters long.";
+        }
+        if (!/[A-Za-z]/.test(value)) {
+          return "Password must contain at least one letter.";
+        }
+        if (!/\d/.test(value)) {
+          return "Password must contain at least one number.";
+        }
+        break;
+
+      default:
+        return "";
+    }
+    return "";
+  };
+
   const handleUserLogin = async (
     e: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     e.preventDefault();
 
     const newErrors: {
-      usernameError?: string;
-      emailError?: string;
-      passwordError?: string;
-    } = {};
-    const usernamePattern = /^[a-zA-Z0-9_.]{3,}$/;
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const passwordPattern = /^.{6,}$/;
+      usernameError: string;
+      emailError: string;
+      passwordError: string;
+    } = {
+      usernameError: validateField("username", username),
+      emailError: validateField("email", email),
+      passwordError: validateField("password", password),
+    };
 
-    // Validate Username
-    if (!usernamePattern.test(username)) {
-      newErrors.usernameError =
-        "Username must be at least 3 characters long and can include letters, numbers, underscores, and periods.";
-    }
-
-    // Validate Email
-    if (!emailPattern.test(email)) {
-      newErrors.emailError =
-        "Please enter a valid email address in the format name@provider.com.";
-    }
-
-    // Validate Password
-    if (!passwordPattern.test(password)) {
-      newErrors.passwordError = "Password must be at least 6 characters long.";
-    }
-
-    // Update errors state
-    console.log({ ...errorMessages, ...newErrors });
-    setErrorMessages({ ...errorMessages, ...newErrors });
+    setErrorMessages(newErrors);
   };
 
   const framerAnimationProvider = (loginMode: boolean, formType: string) => {
@@ -139,6 +153,7 @@ const Login = () => {
                 setPasswordType={setPasswordType}
                 errorMessages={errorMessages}
                 setErrorMessages={setErrorMessages}
+                validateField={validateField}
               />
             </motion.div>
           ) : (
@@ -160,6 +175,7 @@ const Login = () => {
                 setPasswordType={setPasswordType}
                 errorMessages={errorMessages}
                 setErrorMessages={setErrorMessages}
+                validateField={validateField}
               />
             </motion.div>
           )}

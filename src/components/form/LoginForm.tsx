@@ -1,4 +1,5 @@
 import { Eye, EyeClosed } from "lucide-react";
+import { useState } from "react";
 
 type LoginFormProps = {
   loginMode: boolean;
@@ -24,6 +25,7 @@ type LoginFormProps = {
       passwordError: string;
     }>
   >;
+  validateField: (name: string, value: string) => string;
 };
 
 const LoginForm = ({
@@ -40,7 +42,46 @@ const LoginForm = ({
   setPasswordType,
   errorMessages,
   setErrorMessages,
+  validateField,
 }: LoginFormProps) => {
+  const [focusFromBlur, setFocusFromBlur] = useState<{
+    username: boolean;
+    email: boolean;
+    password: boolean;
+  }>({
+    username: false,
+    email: false,
+    password: false,
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    if (setUsername) {
+      if (name === "username") setUsername(value);
+    }
+    if (name === "email") setEmail(value);
+    if (name === "password") setPassword(value);
+
+    if (focusFromBlur[name as keyof typeof focusFromBlur]) {
+      setErrorMessages((prev) => ({
+        ...prev,
+        [name + "Error"]: validateField(name, value),
+      }));
+    }
+  };
+
+  const handleFocusBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFocusFromBlur({ ...focusFromBlur, [name]: true });
+
+    setErrorMessages((prev) => ({
+      ...prev,
+      [name + "Error"]: validateField(name, value),
+    }));
+  };
+
   return (
     <form className="mt-6 pb-4" onSubmit={handleUserLogin} noValidate>
       {!loginMode && (
@@ -49,14 +90,10 @@ const LoginForm = ({
             type="username"
             placeholder="Username"
             className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border border-[#2f2f2f] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
+            name="username"
             value={username}
-            onChange={(e) => {
-              const usernamePattern = /^[a-zA-Z0-9_.]{3,}$/;
-              if (usernamePattern.test(username as string)) {
-                setErrorMessages({ ...errorMessages, usernameError: "" });
-              }
-              setUsername!(e.target.value);
-            }}
+            onChange={handleInputChange}
+            onBlur={handleFocusBlur}
             required
           />
 
@@ -71,16 +108,10 @@ const LoginForm = ({
           type="email"
           placeholder="Email"
           className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border border-[#2f2f2f] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
+          name="email"
           value={email}
-          onChange={(e) => {
-            const emailPattern =
-              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (emailPattern.test(email)) {
-              setErrorMessages({ ...errorMessages, emailError: "" });
-            }
-
-            setEmail(e.target.value);
-          }}
+          onChange={handleInputChange}
+          onBlur={handleFocusBlur}
           required
         />
         <p className="text-red-500 mt-2 text-sm ps-2">
@@ -94,14 +125,10 @@ const LoginForm = ({
             type={passwordType}
             placeholder="Password"
             className="w-full  p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border border-[#2f2f2f] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
+            name="password"
             value={password}
-            onChange={(e) => {
-              const passwordPattern = /^.{6,}$/;
-              if (passwordPattern.test(password)) {
-                setErrorMessages({ ...errorMessages, passwordError: "" });
-              }
-              setPassword(e.target.value);
-            }}
+            onChange={handleInputChange}
+            onBlur={handleFocusBlur}
             required
           />
           <span
