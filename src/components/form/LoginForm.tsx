@@ -12,6 +12,18 @@ type LoginFormProps = {
   handleUserLogin: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   passwordType: "text" | "password";
   setPasswordType: React.Dispatch<React.SetStateAction<"text" | "password">>;
+  errorMessages: {
+    usernameError: string;
+    emailError: string;
+    passwordError: string;
+  };
+  setErrorMessages: React.Dispatch<
+    React.SetStateAction<{
+      usernameError: string;
+      emailError: string;
+      passwordError: string;
+    }>
+  >;
 };
 
 const LoginForm = ({
@@ -26,9 +38,11 @@ const LoginForm = ({
   handleUserLogin,
   passwordType,
   setPasswordType,
+  errorMessages,
+  setErrorMessages,
 }: LoginFormProps) => {
   return (
-    <form className="mt-6 pb-4" onSubmit={handleUserLogin}>
+    <form className="mt-6 pb-4" onSubmit={handleUserLogin} noValidate>
       {!loginMode && (
         <div className="mb-4">
           <input
@@ -36,9 +50,19 @@ const LoginForm = ({
             placeholder="Username"
             className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border border-[#2f2f2f] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
             value={username}
-            onChange={(e) => setUsername!(e.target.value)}
+            onChange={(e) => {
+              const usernamePattern = /^[a-zA-Z0-9_.]{3,}$/;
+              if (usernamePattern.test(username as string)) {
+                setErrorMessages({ ...errorMessages, usernameError: "" });
+              }
+              setUsername!(e.target.value);
+            }}
             required
           />
+
+          <p className="text-red-500 mt-2 ps-2 text-sm">
+            {errorMessages.usernameError}
+          </p>
         </div>
       )}
 
@@ -48,32 +72,55 @@ const LoginForm = ({
           placeholder="Email"
           className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border border-[#2f2f2f] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            const emailPattern =
+              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (emailPattern.test(email)) {
+              setErrorMessages({ ...errorMessages, emailError: "" });
+            }
+
+            setEmail(e.target.value);
+          }}
           required
         />
+        <p className="text-red-500 mt-2 text-sm ps-2">
+          {errorMessages.emailError}
+        </p>
       </div>
 
-      <div className="relative group">
-        <input
-          type={passwordType}
-          placeholder="Password"
-          className="w-full  p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border border-[#2f2f2f] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <span
-          className={`absolute cursor-pointer right-5 top-1/2 -translate-y-1/2 ${password.trim().length <= 0 && "hidden"} hidden group-focus:block group-hover:block`}
-        >
-          <Eye
-            className={`text-faded-gray ${passwordType === "text" && "hidden"}`}
-            onClick={() => setPasswordType("text")}
+      <div>
+        <div className="group relative">
+          <input
+            type={passwordType}
+            placeholder="Password"
+            className="w-full  p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border border-[#2f2f2f] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
+            value={password}
+            onChange={(e) => {
+              const passwordPattern = /^.{6,}$/;
+              if (passwordPattern.test(password)) {
+                setErrorMessages({ ...errorMessages, passwordError: "" });
+              }
+              setPassword(e.target.value);
+            }}
+            required
           />
-          <EyeClosed
-            className={`text-faded-gray ${passwordType === "password" && "hidden"}`}
-            onClick={() => setPasswordType("password")}
-          />
-        </span>
+          <span
+            className={`absolute cursor-pointer right-5 top-1/2 -translate-y-1/2 ${password.trim().length <= 0 && "hidden"} hidden group-focus:block group-hover:block`}
+          >
+            <Eye
+              className={`text-faded-gray ${passwordType === "text" && "hidden"}`}
+              onClick={() => setPasswordType("text")}
+            />
+            <EyeClosed
+              className={`text-faded-gray ${passwordType === "password" && "hidden"}`}
+              onClick={() => setPasswordType("password")}
+            />
+          </span>
+        </div>
+
+        <p className="text-red-500 mt-2 ps-2 text-sm">
+          {errorMessages.passwordError}
+        </p>
       </div>
 
       <button
@@ -87,8 +134,7 @@ const LoginForm = ({
         {loginMode ? "Don't have an account?" : "Already have an account?"}{" "}
         &nbsp;
         <a
-          href="#"
-          className="dark:text-secondary-dark text-secondary-light hover:opacity-75"
+          className="dark:text-secondary-dark cursor-pointer text-secondary-light hover:opacity-75"
           onClick={() => setLoginMode((prev) => !prev)}
         >
           {loginMode ? "Sign Up" : "Login"}

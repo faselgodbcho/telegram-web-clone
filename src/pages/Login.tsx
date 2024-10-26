@@ -1,6 +1,7 @@
 import LoginForm from "@/components/form/LoginForm";
 import useSystemTheme from "@/hooks/useSystemTheme";
-import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -9,14 +10,91 @@ const Login = () => {
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
   );
-  const [loginMode, setLoginMode] = useState<boolean>(false);
+  const [loginMode, setLoginMode] = useState<boolean>(true);
   const [isDarkMode] = useSystemTheme();
+  const [errorMessages, setErrorMessages] = useState<{
+    usernameError: string;
+    emailError: string;
+    passwordError: string;
+  }>({
+    usernameError: "",
+    emailError: "",
+    passwordError: "",
+  });
+
+  useEffect(() => {
+    setPasswordType("password");
+
+    setErrorMessages({ usernameError: "", emailError: "", passwordError: "" });
+  }, [loginMode]);
 
   const handleUserLogin = async (
     e: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     e.preventDefault();
-    console.log(email, password);
+
+    const newErrors: {
+      usernameError?: string;
+      emailError?: string;
+      passwordError?: string;
+    } = {};
+    const usernamePattern = /^[a-zA-Z0-9_.]{3,}$/;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const passwordPattern = /^.{6,}$/;
+
+    // Validate Username
+    if (!usernamePattern.test(username)) {
+      newErrors.usernameError =
+        "Username must be at least 3 characters long and can include letters, numbers, underscores, and periods.";
+    }
+
+    // Validate Email
+    if (!emailPattern.test(email)) {
+      newErrors.emailError =
+        "Please enter a valid email address in the format name@provider.com.";
+    }
+
+    // Validate Password
+    if (!passwordPattern.test(password)) {
+      newErrors.passwordError = "Password must be at least 6 characters long.";
+    }
+
+    // Update errors state
+    console.log({ ...errorMessages, ...newErrors });
+    setErrorMessages({ ...errorMessages, ...newErrors });
+  };
+
+  const framerAnimationProvider = (loginMode: boolean, formType: string) => {
+    if (loginMode && formType === "login") {
+      return {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0, x: -100 },
+        transition: { duration: 0.3 },
+      };
+    }
+    if (loginMode && formType === "signup") {
+      return {
+        initial: { opacity: 1, x: 100 },
+        animate: { opacity: 1, x: 0 },
+        transition: { duration: 0.8 },
+      };
+    }
+    if (!loginMode && formType === "login") {
+      return {
+        initial: { opacity: 1, x: 100 },
+        animate: { opacity: 1, x: 0 },
+        transition: { duration: 0.8 },
+      };
+    }
+    if (!loginMode && formType === "signup") {
+      return {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0, x: -100 },
+        transition: { duration: 0.3 },
+      };
+    }
   };
 
   return (
@@ -43,33 +121,49 @@ const Login = () => {
             : "Hello 👋, Let's get you signed up for the telegram web clone. please enter your credentials below."}
         </p>
 
-        {loginMode ? (
-          <LoginForm
-            loginMode={loginMode}
-            setLoginMode={setLoginMode}
-            email={email}
-            setEmail={setEmail}
-            password={password}
-            setPassword={setPassword}
-            handleUserLogin={handleUserLogin}
-            passwordType={passwordType}
-            setPasswordType={setPasswordType}
-          />
-        ) : (
-          <LoginForm
-            loginMode={loginMode}
-            setLoginMode={setLoginMode}
-            username={username}
-            setUsername={setUsername}
-            email={email}
-            setEmail={setEmail}
-            password={password}
-            setPassword={setPassword}
-            handleUserLogin={handleUserLogin}
-            passwordType={passwordType}
-            setPasswordType={setPasswordType}
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {loginMode ? (
+            <motion.div
+              key="login"
+              {...framerAnimationProvider(loginMode, "login")}
+            >
+              <LoginForm
+                loginMode={loginMode}
+                setLoginMode={setLoginMode}
+                email={email}
+                setEmail={setEmail}
+                password={password}
+                setPassword={setPassword}
+                handleUserLogin={handleUserLogin}
+                passwordType={passwordType}
+                setPasswordType={setPasswordType}
+                errorMessages={errorMessages}
+                setErrorMessages={setErrorMessages}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="signup"
+              {...framerAnimationProvider(loginMode, "signup")}
+            >
+              <LoginForm
+                loginMode={loginMode}
+                setLoginMode={setLoginMode}
+                username={username}
+                setUsername={setUsername}
+                email={email}
+                setEmail={setEmail}
+                password={password}
+                setPassword={setPassword}
+                handleUserLogin={handleUserLogin}
+                passwordType={passwordType}
+                setPasswordType={setPasswordType}
+                errorMessages={errorMessages}
+                setErrorMessages={setErrorMessages}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
