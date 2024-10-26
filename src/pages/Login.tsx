@@ -2,6 +2,7 @@ import LoginForm from "@/components/form/LoginForm";
 import useSystemTheme from "@/hooks/useSystemTheme";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import useAuth from "@/hooks/useAuth";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -11,7 +12,6 @@ const Login = () => {
     "password"
   );
   const [loginMode, setLoginMode] = useState<boolean>(true);
-  const [isDarkMode] = useSystemTheme();
   const [errorMessages, setErrorMessages] = useState<{
     usernameError: string;
     emailError: string;
@@ -22,11 +22,27 @@ const Login = () => {
     passwordError: "",
   });
 
+  const [isDarkMode] = useSystemTheme();
+  const { login, signUp } = useAuth();
+
   useEffect(() => {
     setPasswordType("password");
-
     setErrorMessages({ usernameError: "", emailError: "", passwordError: "" });
   }, [loginMode]);
+
+  const handleLogin = async (
+    email: string,
+    password: string
+  ): Promise<void> => {
+    await login(email, password);
+  };
+
+  const handleSignUp = async (
+    email: string,
+    password: string
+  ): Promise<void> => {
+    await signUp(email, password);
+  };
 
   const validateField = (name: string, value: string): string => {
     switch (name) {
@@ -76,6 +92,35 @@ const Login = () => {
     };
 
     setErrorMessages(newErrors);
+
+    let submitForm: boolean;
+
+    if (loginMode) {
+      submitForm = ["emailError", "passwordError"]
+        .map((key) =>
+          newErrors[key as keyof typeof newErrors].trim().length ? false : true
+        )
+        .every((value) => value);
+    } else {
+      submitForm = ["usernameError", "emailError", "passwordError"]
+        .map((key) =>
+          newErrors[key as keyof typeof newErrors].trim().length ? false : true
+        )
+        .every((value) => value);
+    }
+
+    if (!submitForm) return;
+    console.log("form submitted");
+
+    try {
+      if (loginMode) {
+        handleLogin(email, password);
+      } else {
+        handleSignUp(email, password);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const framerAnimationProvider = (loginMode: boolean, formType: string) => {

@@ -89,7 +89,7 @@ const LoginForm = ({
           <input
             type="username"
             placeholder="Username"
-            className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border border-[#2f2f2f] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
+            className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border dark:border-[#2f2f2f] border-[#AAA] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
             name="username"
             value={username}
             onChange={handleInputChange}
@@ -107,7 +107,7 @@ const LoginForm = ({
         <input
           type="email"
           placeholder="Email"
-          className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border border-[#2f2f2f] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
+          className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border dark:border-[#2f2f2f] border-[#AAA] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
           name="email"
           value={email}
           onChange={handleInputChange}
@@ -124,7 +124,7 @@ const LoginForm = ({
           <input
             type={passwordType}
             placeholder="Password"
-            className="w-full  p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border border-[#2f2f2f] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
+            className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border dark:border-[#2f2f2f] border-[#AAA] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
             name="password"
             value={password}
             onChange={handleInputChange}

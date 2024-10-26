@@ -20,7 +20,7 @@ const auth = getAuth(app);
 
 // connect to local emulators
 if (import.meta.env.DEV) {
-  connectAuthEmulator(auth, "");
+  // connectAuthEmulator(auth, "");
 }
 
 // export services

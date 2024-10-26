@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
+import { Toaster } from "@/components/ui/toaster";
 
 const App = () => {
   return (
@@ -7,6 +8,8 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
       </Routes>
+
+      <Toaster />
     </div>
   );
 };
