@@ -158,7 +158,7 @@ const LoginForm = ({
       </button>
 
       <p className="text-center mt-3 text-faded-gray">
-        {loginMode ? "Don't have an account?" : "Already have an account?"}{" "}
+        {loginMode ? "Don't have an account?" : "Already have an account?"}
         &nbsp;
         <a
           className="dark:text-secondary-dark cursor-pointer text-secondary-light hover:opacity-75"
