@@ -3,12 +3,14 @@ import {
   AuthErrorCodes,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
   User,
 } from "firebase/auth";
 import { auth } from "@/config/firebase.config";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export type AuthContextType = {
   user: User | null;
@@ -31,8 +33,9 @@ type Children = {
 };
 
 export const AuthProvider = ({ children }: Children): React.ReactNode => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => auth.currentUser);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (user) => {
@@ -46,7 +49,10 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
     if (!(e instanceof Error) || !("code" in e)) {
       toast({
         title: "Error",
-        description: "An error occurred. Please try again later.",
+        description: "Incorrect email or password. Please try again.",
+        variant: "destructive",
+        className:
+          "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
       });
 
       return;
@@ -116,6 +122,15 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
             "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 text-white font-medium rounded-lg p-4 shadow-lg",
         });
         break;
+      case AuthErrorCodes.NETWORK_REQUEST_FAILED:
+        toast({
+          title: "Error",
+          description: "Network Error. Please check your internet connection.",
+          variant: "destructive",
+          className:
+            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 text-white font-medium rounded-lg p-4 shadow-lg",
+        });
+        break;
       default:
         toast({
           title: "Error",
@@ -134,6 +149,12 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
         email,
         password
       );
+      const user = userCredentials.user;
+
+      if (user && !user.emailVerified) {
+        await sendEmailVerification(user);
+        navigate("/confirm");
+      }
     } catch (e) {
       console.error(e);
       handleAuthError(e);
@@ -147,6 +168,12 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
         email,
         password
       );
+      const user = userCredentials.user;
+
+      if (user && !user.emailVerified) {
+        await sendEmailVerification(user);
+        navigate("/confirm");
+      }
     } catch (e) {
       console.error(e);
       handleAuthError(e);

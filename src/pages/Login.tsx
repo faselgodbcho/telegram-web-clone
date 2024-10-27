@@ -3,6 +3,7 @@ import useSystemTheme from "@/hooks/useSystemTheme";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import useAuth from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -21,9 +22,9 @@ const Login = () => {
     emailError: "",
     passwordError: "",
   });
-
   const [isDarkMode] = useSystemTheme();
-  const { login, signUp } = useAuth();
+  const { user, login, signUp } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setPasswordType("password");
@@ -155,6 +156,16 @@ const Login = () => {
       };
     }
   };
+
+  useEffect(() => {
+    if (user && user.emailVerified) {
+      navigate("/home");
+    }
+
+    if (user && !user.emailVerified) {
+      navigate("/confirm");
+    }
+  }, [user, navigate]);
 
   return (
     <div className="w-full min-h-screen px-4 select-none min-[1450px]:flex items-center justify-center">
