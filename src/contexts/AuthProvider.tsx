@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
           description: "No account found with this Email. Try signing up.",
           variant: "destructive",
           className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 text-white font-medium rounded-lg p-4 shadow-lg",
+            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
         });
         break;
       case AuthErrorCodes.EMAIL_EXISTS:
@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
           description: "This email is already in use. Try logging in.",
           variant: "destructive",
           className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 text-white font-medium rounded-lg p-4 shadow-lg",
+            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
         });
         break;
       case AuthErrorCodes.WEAK_PASSWORD:
@@ -115,7 +115,7 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
           description: "Password is too weak. Please choose a stronger one.",
           variant: "destructive",
           className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 text-white font-medium rounded-lg p-4 shadow-lg",
+            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
         });
         break;
       case AuthErrorCodes.INVALID_PASSWORD:
@@ -124,7 +124,7 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
           description: "Incorrect password. Please try again.",
           variant: "destructive",
           className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 text-white font-medium rounded-lg p-4 shadow-lg",
+            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
         });
         break;
       case AuthErrorCodes.NETWORK_REQUEST_FAILED:
@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
             "A network error occurred. Please check your internet connection.",
           variant: "destructive",
           className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 text-white font-medium rounded-lg p-4 shadow-lg",
+            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
         });
         break;
       default:
@@ -143,7 +143,7 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
           description: "An error occurred. Please try again later." + e.code,
           variant: "destructive",
           className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 text-white font-medium rounded-lg p-4 shadow-lg",
+            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
         });
     }
   };
