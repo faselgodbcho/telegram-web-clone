@@ -1,4 +1,4 @@
-import { Eye, EyeClosed } from "lucide-react";
+import { Eye, EyeClosed, LoaderCircle } from "lucide-react";
 import { useState } from "react";
 
 type LoginFormProps = {
@@ -26,6 +26,7 @@ type LoginFormProps = {
     }>
   >;
   validateField: (name: string, value: string) => string;
+  loggingIn: boolean;
 };
 
 const LoginForm = ({
@@ -43,6 +44,7 @@ const LoginForm = ({
   errorMessages,
   setErrorMessages,
   validateField,
+  loggingIn,
 }: LoginFormProps) => {
   const [focusFromBlur, setFocusFromBlur] = useState<{
     username: boolean;
@@ -152,9 +154,11 @@ const LoginForm = ({
 
       <button
         type="submit"
-        className="w-full p-3 dark:bg-secondary-dark bg-secondary-light text-primary-light font-medium rounded-xl mt-4 text-lg hover:bg-opacity-80"
+        disabled={loggingIn}
+        className={`w-full p-3 dark:bg-secondary-dark bg-secondary-light text-primary-light font-medium rounded-xl mt-4 text-lg  flex justify-center gap-4 items-center ${!loggingIn ? "hover:bg-opacity-80" : "disabled:bg-opacity-70 cursor-not-allowed"}`}
       >
-        Next
+        {loggingIn ? "Please wait" : "Next"}
+        {loggingIn && <LoaderCircle className="animate-spin" />}
       </button>
 
       <p className="text-center mt-3 text-faded-gray">

@@ -24,6 +24,7 @@ const Login = () => {
   });
   const [isDarkMode] = useSystemTheme();
   const { user, login, signUp } = useAuth();
+  const [loggingIn, setLoggingIn] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,14 +36,28 @@ const Login = () => {
     email: string,
     password: string
   ): Promise<void> => {
-    await login(email, password);
+    setLoggingIn(true);
+    try {
+      await login(email, password);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoggingIn(false);
+    }
   };
 
   const handleSignUp = async (
     email: string,
     password: string
   ): Promise<void> => {
-    await signUp(email, password);
+    setLoggingIn(true);
+    try {
+      await signUp(email, password);
+    } catch(e) {
+      console.error(e);
+    } finally {
+      setLoggingIn(false);
+    }
   };
 
   const validateField = (name: string, value: string): string => {
@@ -210,6 +225,7 @@ const Login = () => {
                 errorMessages={errorMessages}
                 setErrorMessages={setErrorMessages}
                 validateField={validateField}
+                loggingIn={loggingIn}
               />
             </motion.div>
           ) : (
@@ -232,6 +248,7 @@ const Login = () => {
                 errorMessages={errorMessages}
                 setErrorMessages={setErrorMessages}
                 validateField={validateField}
+                loggingIn={loggingIn}
               />
             </motion.div>
           )}

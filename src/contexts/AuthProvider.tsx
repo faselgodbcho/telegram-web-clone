@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
     });
 
     return () => unSubscribe();
-  }, []);
+  }, [auth]);
 
   const handleAuthError = (e: unknown) => {
     if (!(e instanceof Error) || !("code" in e)) {
@@ -129,8 +129,9 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
         break;
       case AuthErrorCodes.NETWORK_REQUEST_FAILED:
         toast({
-          title: "Error",
-          description: "Network Error. Please check your internet connection.",
+          title: "Network Error",
+          description:
+            "A network error occurred. Please check your internet connection.",
           variant: "destructive",
           className:
             "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 text-white font-medium rounded-lg p-4 shadow-lg",
