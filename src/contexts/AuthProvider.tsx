@@ -62,6 +62,15 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
             "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
         });
         break;
+      case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
+        toast({
+          title: "Error",
+          description: "Too many attempts. Please wait before trying again.",
+          variant: "destructive",
+          className:
+            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
+        });
+        break;
       case AuthErrorCodes.INVALID_EMAIL:
         toast({
           title: "Error",
