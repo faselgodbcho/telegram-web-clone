@@ -80,21 +80,21 @@ const Confirm = () => {
     <div className="w-full min-h-screen px-4 select-none min-[1450px]:flex items-center justify-center">
       <div className="max-w-[360px] w-full mx-auto pt-32">
         <h2 className="text-3xl font-medium mt-8 text-center flex gap-2 items-center justify-center">
-          {user?.email || "your email"}
+          {user?.email || ""}
           <span onClick={handleLogout}>
             <MdOutlineEdit
               size="0.8em"
-              className="text-[#AAA] hover:text-white cursor-pointer"
+              className="text-[#AAA] hover:dark:text-white cursor-pointer hover:text-black transition-colors"
             />
           </span>
         </h2>
 
-        <p className="text-faded-gray mt-4 text-sm text-center">
+        <p className="mt-4 dark:text-faded-gray text-[#707579] text-center">
           A confirmation link has been sent to your email. Please check your
           inbox to complete the verification.
         </p>
 
-        <p className="text-faded-gray mt-4 text-sm text-center">
+        <p className="mt-4 dark:text-faded-gray text-[#707579] text-center">
           Didn’t receive the email? Check your spam folder or click below to
           resend.
         </p>

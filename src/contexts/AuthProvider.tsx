@@ -17,6 +17,7 @@ export type AuthContextType = {
   login: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  isAuthLoading: boolean;
 };
 
 const initAuthContext: AuthContextType = {
@@ -24,6 +25,7 @@ const initAuthContext: AuthContextType = {
   login: async () => {},
   logout: async () => {},
   signUp: async () => {},
+  isAuthLoading: false,
 };
 
 const AuthContext = createContext<AuthContextType>(initAuthContext);
@@ -34,12 +36,15 @@ type Children = {
 
 export const AuthProvider = ({ children }: Children): React.ReactNode => {
   const [user, setUser] = useState<User | null>(() => auth.currentUser);
+  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
+
   const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      setIsAuthLoading(false);
     });
 
     return () => unSubscribe();
@@ -193,7 +198,9 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signUp, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, signUp, login, logout, isAuthLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

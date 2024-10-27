@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 const Home = () => {
-  const { user } = useAuth();
+  const { user, isAuthLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,6 +15,12 @@ const Home = () => {
       navigate("/confirm");
     }
   }, [user, navigate]);
+
+  if (isAuthLoading) {
+    return (
+      <div className="bg-primary-light dark:bg-primary-dark text-primary-dark dark:text-primary-light w-full min-h-screen"></div>
+    );
+  }
 
   return <div>Home</div>;
 };
