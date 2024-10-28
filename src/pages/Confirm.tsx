@@ -1,6 +1,6 @@
 import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
+import useCustomToaster from "@/hooks/useCustomToaster";
 import { AuthErrorCodes, sendEmailVerification } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { MdOutlineEdit } from "react-icons/md";
@@ -10,17 +10,11 @@ const Confirm = () => {
   const navigate = useNavigate();
   const { user, logout, isAuthLoading } = useAuth();
   const [resending, setResending] = useState<boolean>(false);
-  const { toast } = useToast();
+  const { showToast } = useCustomToaster();
 
   const resendEmailVerification = async (): Promise<void> => {
     if (!user) {
-      toast({
-        title: "Error",
-        description: "Please login to re-send a verification email.",
-        variant: "destructive",
-        className:
-          "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-      });
+      showToast("Error", "Please login to re-send a verification email.");
 
       return;
     }
@@ -29,47 +23,30 @@ const Confirm = () => {
 
     try {
       await sendEmailVerification(user);
-      toast({
-        title: "Verification Sent",
-        description:
-          "Email verification successfully sent. Please check your inbox or spam folders.",
-        variant: "destructive",
-        className:
-          "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-      });
+      showToast(
+        "Verification Sent",
+
+        "Email verification successfully sent. Please check your inbox or spam folders."
+      );
     } catch (e) {
       console.error(e);
 
       if (e instanceof Error && "code" in e) {
         switch (e.code) {
           case AuthErrorCodes.NETWORK_REQUEST_FAILED:
-            toast({
-              title: "Network Error",
-              description:
-                "A network error occurred. Please check your internet connection.",
-              variant: "destructive",
-              className:
-                "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-            });
+            showToast(
+              "Network Error",
+              "A network error occurred. Please check your internet connection."
+            );
             break;
           case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
-            toast({
-              title: "Error",
-              description: "Too many request. Please try again later.",
-              variant: "destructive",
-              className:
-                "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-            });
+            showToast("Error", "Too many request. Please try again later.");
             break;
           default:
-            toast({
-              title: "Error",
-              description:
-                "An unexpected error occurred. Please try again later.",
-              variant: "destructive",
-              className:
-                "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-            });
+            showToast(
+              "Error",
+              "An unexpected error occurred. Please try again later."
+            );
             break;
         }
       }
@@ -93,14 +70,10 @@ const Confirm = () => {
       await logout();
     } catch (e) {
       console.error(e);
-      toast({
-        title: "Error",
-        description:
-          "Sorry, you can't edit your email. Please try again later.",
-        variant: "destructive",
-        className:
-          "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-      });
+      showToast(
+        "Error",
+        "Sorry, you can't edit your email. Please try again later."
+      );
     }
   };
 

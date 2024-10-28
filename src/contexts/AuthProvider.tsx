@@ -9,8 +9,8 @@ import {
   User,
 } from "firebase/auth";
 import { auth } from "@/config/firebase.config";
-import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import useCustomToaster from "@/hooks/useCustomToaster";
 
 export type AuthContextType = {
   user: User | null;
@@ -38,8 +38,8 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
   const [user, setUser] = useState<User | null>(() => auth.currentUser);
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
 
-  const { toast } = useToast();
   const navigate = useNavigate();
+  const { showToast } = useCustomToaster();
 
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (user) => {
@@ -52,99 +52,50 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
 
   const handleAuthError = (e: unknown) => {
     if (!(e instanceof Error) || !("code" in e)) {
-      toast({
-        title: "Error",
-        description: "Incorrect email or password. Please try again.",
-        variant: "destructive",
-        className:
-          "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-      });
-
+      showToast("Error", "Incorrect email or password. Please try again.");
       return;
     }
 
     switch (e.code) {
       case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
-        toast({
-          title: "Error",
-          description: "Incorrect email or password. Please try again.",
-          variant: "destructive",
-          className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-        });
+        showToast("Error", "Incorrect email or password. Please try again.");
         break;
       case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
-        toast({
-          title: "Error",
-          description: "Too many attempts. Please wait before trying again.",
-          variant: "destructive",
-          className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-        });
+        showToast(
+          "Error",
+          "Too many attempts. Please wait before trying again."
+        );
         break;
       case AuthErrorCodes.INVALID_EMAIL:
-        toast({
-          title: "Error",
-          description: "Invalid email address format.",
-          variant: "destructive",
-          className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-        });
+        showToast("Error", "Invalid email address format.");
         break;
       case AuthErrorCodes.USER_DELETED:
-        toast({
-          title: "Error",
-          description: "No account found with this Email. Try signing up.",
-          variant: "destructive",
-          className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-        });
+        showToast("Error", "No account found with this Email. Try signing up.");
         break;
       case AuthErrorCodes.EMAIL_EXISTS:
-        toast({
-          title: "Error",
-          description: "This email is already in use. Try logging in.",
-          variant: "destructive",
-          className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-        });
+        showToast("Error", "This email is already in use. Try logging in.");
         break;
       case AuthErrorCodes.WEAK_PASSWORD:
-        toast({
-          title: "Error",
-          description: "Password is too weak. Please choose a stronger one.",
-          variant: "destructive",
-          className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-        });
+        showToast(
+          "Error",
+          "Password is too weak. Please choose a stronger one."
+        );
         break;
       case AuthErrorCodes.INVALID_PASSWORD:
-        toast({
-          title: "Error",
-          description: "Incorrect password. Please try again.",
-          variant: "destructive",
-          className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-        });
+        showToast("Error", "Incorrect password. Please try again.");
         break;
       case AuthErrorCodes.NETWORK_REQUEST_FAILED:
-        toast({
-          title: "Network Error",
-          description:
-            "A network error occurred. Please check your internet connection.",
-          variant: "destructive",
-          className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-        });
+        showToast(
+          "Network Error",
+
+          "A network error occurred. Please check your internet connection."
+        );
         break;
       default:
-        toast({
-          title: "Error",
-          description: "An error occurred. Please try again later." + e.code,
-          variant: "destructive",
-          className:
-            "bg-primary-light/30 text-primary-dark dark:bg-primary-dark/30 backdrop-blur-md border border-white/10 dark:text-white font-medium rounded-lg p-4 shadow-lg",
-        });
+        showToast(
+          "Error",
+          "An error occurred. Please try again later." + e.code
+        );
     }
   };
 
@@ -191,10 +142,7 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
       await signOut(auth);
     } catch (e) {
       console.error(e);
-      toast({
-        title: "Error",
-        description: "Failed to logout. Please try again later.",
-      });
+      showToast("Error", "Failed to logout. Please try again later.");
     }
   };
 
