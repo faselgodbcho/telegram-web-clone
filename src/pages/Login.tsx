@@ -1,7 +1,7 @@
 import LoginForm from "@/components/form/LoginForm";
 import useSystemTheme from "@/hooks/useSystemTheme";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState, useLayoutEffect } from "react";
 import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import validateField from "@/utils/fieldValidator";
@@ -27,6 +27,16 @@ const Login = () => {
   const [isDarkMode] = useSystemTheme();
   const { user, login, signUp } = useAuth();
   const navigate = useNavigate();
+
+  useLayoutEffect(() => {
+    if (user && user.emailVerified) {
+      navigate("/home");
+    }
+
+    if (user && !user.emailVerified) {
+      navigate("/confirm");
+    }
+  }, [user, navigate]);
 
   const loginMutation = useMutation({
     mutationFn: async ({
@@ -140,16 +150,6 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    if (user && user.emailVerified) {
-      navigate("/home");
-    }
-
-    if (user && !user.emailVerified) {
-      navigate("/confirm");
-    }
-  }, [user, navigate]);
-
   return (
     <div className="w-full min-h-screen px-4 select-none min-[1450px]:flex items-center justify-center">
       <div className="max-w-[360px] w-full mx-auto pt-12">
@@ -171,7 +171,7 @@ const Login = () => {
         <p className="text-faded-gray mt-4 text-[16px] text-center">
           {loginMode
             ? "Please enter your email and password to continue using the telegram web clone"
-            : "Hello 👋, Let's get you signed up for the telegram web clone. please enter your credentials below."}
+            : "Hello 👋, Let's sign you up. please enter your credentials below."}
         </p>
 
         <AnimatePresence mode="wait">
