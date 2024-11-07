@@ -1,38 +1,34 @@
 import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import useCustomToaster from "@/hooks/useCustomToaster";
-import { AuthErrorCodes, sendEmailVerification } from "firebase/auth";
+import { sendEmailVerification } from "firebase/auth";
 import { useState, useLayoutEffect } from "react";
 import { MdOutlineEdit } from "react-icons/md";
 import { LoaderCircle } from "lucide-react";
 import authErrorHandler from "@/utils/authErrorHandler";
+import { useMutation } from "@tanstack/react-query";
 
 const Confirm = () => {
   const navigate = useNavigate();
   const { user, logout, isAuthLoading } = useAuth();
-  const [resending, setResending] = useState<boolean>(false);
   const { showToast } = useCustomToaster();
 
-  const resendEmailVerification = async (): Promise<void> => {
-    if (!user) {
-      showToast("Error", "Please login to re-send a verification email.");
-      return;
-    }
-
-    setResending(true);
-    try {
+  const resendEmailMutation = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("User not logged in.");
       await sendEmailVerification(user);
+    },
+    onSuccess: () => {
       showToast(
         "Verification Sent",
         "Email verification successfully sent. Please check your inbox or spam folders."
       );
-    } catch (e) {
-      console.error(e);
-      authErrorHandler(e, showToast);
-    } finally {
-      setResending(false);
-    }
-  };
+    },
+    onError: (error) => {
+      console.error(error);
+      authErrorHandler(error, showToast);
+    },
+  });
 
   useLayoutEffect(() => {
     if (!user) {
@@ -44,17 +40,18 @@ const Confirm = () => {
     }
   }, [user, navigate]);
 
-  const handleLogout = async (): Promise<void> => {
-    try {
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
       await logout();
-    } catch (e) {
-      console.error(e);
+    },
+    onError: (error) => {
+      console.error(error);
       showToast(
         "Error",
         "Sorry, you can't edit your email. Please try again later."
       );
-    }
-  };
+    },
+  });
 
   if (isAuthLoading) {
     return (
@@ -67,7 +64,7 @@ const Confirm = () => {
       <div className="max-w-[360px] w-full mx-auto pt-32">
         <h2 className="text-3xl font-medium mt-8 text-center flex gap-2 items-center justify-center">
           {user?.email || ""}
-          <span onClick={handleLogout}>
+          <span onClick={() => logoutMutation.mutate()}>
             <MdOutlineEdit
               size="0.8em"
               className="text-[#AAA] hover:dark:text-white cursor-pointer hover:text-black transition-colors"
@@ -86,12 +83,14 @@ const Confirm = () => {
         </p>
 
         <button
-          className={`w-full p-3 dark:bg-secondary-dark bg-secondary-light text-primary-light font-medium rounded-xl mt-4 text-lg  flex justify-center gap-4 items-center  ${!resending ? "hover:bg-opacity-80" : "disabled:bg-opacity-70 cursor-not-allowed"}`}
-          onClick={resendEmailVerification}
-          disabled={resending}
+          className={`w-full p-3 dark:bg-secondary-dark bg-secondary-light text-primary-light font-medium rounded-xl mt-4 text-lg  flex justify-center gap-4 items-center  ${!resendEmailMutation.isPending ? "hover:bg-opacity-80" : "disabled:bg-opacity-70 cursor-not-allowed"}`}
+          onClick={() => resendEmailMutation.mutate()}
+          disabled={resendEmailMutation.isPending}
         >
-          {resending ? "Please wait" : "Resend"}
-          {resending && <LoaderCircle className="animate-spin" />}
+          {resendEmailMutation.isPending ? "Please wait" : "Resend"}
+          {resendEmailMutation.isPending && (
+            <LoaderCircle className="animate-spin" />
+          )}
         </button>
       </div>
     </div>

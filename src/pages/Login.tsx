@@ -5,6 +5,7 @@ import { useEffect, useState, useLayoutEffect } from "react";
 import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import validateField from "@/utils/fieldValidator";
+import { useMutation } from "@tanstack/react-query";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -25,7 +26,6 @@ const Login = () => {
   });
   const [isDarkMode] = useSystemTheme();
   const { user, login, signUp } = useAuth();
-  const [loggingIn, setLoggingIn] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useLayoutEffect(() => {
@@ -33,33 +33,31 @@ const Login = () => {
     setErrorMessages({ usernameError: "", emailError: "", passwordError: "" });
   }, [loginMode]);
 
-  const handleLogin = async (
-    email: string,
-    password: string
-  ): Promise<void> => {
-    setLoggingIn(true);
-    try {
-      await login(email, password);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoggingIn(false);
-    }
-  };
+  const loginMutation = useMutation({
+    mutationFn: async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }) => await login(email, password),
+    onError: (error) => {
+      console.error("Login failed:", error);
+    },
+  });
 
-  const handleSignUp = async (
-    email: string,
-    password: string
-  ): Promise<void> => {
-    setLoggingIn(true);
-    try {
-      await signUp(email, password);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoggingIn(false);
-    }
-  };
+  const signUpMutation = useMutation({
+    mutationFn: async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }) => await signUp(email, password),
+    onError: (error) => {
+      console.error("Sign-up failed:", error);
+    },
+  });
 
   const handleUserLogin = async (
     e: React.FormEvent<HTMLFormElement>
@@ -99,9 +97,9 @@ const Login = () => {
 
     try {
       if (loginMode) {
-        handleLogin(email, password);
+        loginMutation.mutate({ email, password });
       } else {
-        handleSignUp(email, password);
+        signUpMutation.mutate({ email, password });
       }
     } catch (e) {
       console.error(e);
@@ -194,7 +192,7 @@ const Login = () => {
                 errorMessages={errorMessages}
                 setErrorMessages={setErrorMessages}
                 validateField={validateField}
-                loggingIn={loggingIn}
+                loggingIn={loginMutation.isPending}
               />
             </motion.div>
           ) : (
@@ -217,7 +215,7 @@ const Login = () => {
                 errorMessages={errorMessages}
                 setErrorMessages={setErrorMessages}
                 validateField={validateField}
-                loggingIn={loggingIn}
+                loggingIn={signUpMutation.isPending}
               />
             </motion.div>
           )}
