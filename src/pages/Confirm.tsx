@@ -2,9 +2,10 @@ import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import useCustomToaster from "@/hooks/useCustomToaster";
 import { AuthErrorCodes, sendEmailVerification } from "firebase/auth";
-import { useEffect, useState, useLayoutEffect } from "react";
+import { useState, useLayoutEffect } from "react";
 import { MdOutlineEdit } from "react-icons/md";
 import { LoaderCircle } from "lucide-react";
+import authErrorHandler from "@/utils/authErrorHandler";
 
 const Confirm = () => {
   const navigate = useNavigate();
@@ -15,41 +16,19 @@ const Confirm = () => {
   const resendEmailVerification = async (): Promise<void> => {
     if (!user) {
       showToast("Error", "Please login to re-send a verification email.");
-
       return;
     }
 
     setResending(true);
-
     try {
       await sendEmailVerification(user);
       showToast(
         "Verification Sent",
-
         "Email verification successfully sent. Please check your inbox or spam folders."
       );
     } catch (e) {
       console.error(e);
-
-      if (e instanceof Error && "code" in e) {
-        switch (e.code) {
-          case AuthErrorCodes.NETWORK_REQUEST_FAILED:
-            showToast(
-              "Network Error",
-              "A network error occurred. Please check your internet connection."
-            );
-            break;
-          case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
-            showToast("Error", "Too many request. Please try again later.");
-            break;
-          default:
-            showToast(
-              "Error",
-              "An unexpected error occurred. Please try again later."
-            );
-            break;
-        }
-      }
+      authErrorHandler(e);
     } finally {
       setResending(false);
     }
