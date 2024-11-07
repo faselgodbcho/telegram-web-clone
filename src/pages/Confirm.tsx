@@ -36,7 +36,7 @@ const Confirm = () => {
     }
 
     if (user && user.emailVerified) {
-      navigate("/home");
+      navigate("/");
     }
   }, [user, navigate]);
 

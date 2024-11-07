@@ -30,7 +30,7 @@ const Login = () => {
 
   useLayoutEffect(() => {
     if (user && user.emailVerified) {
-      navigate("/home");
+      navigate("/");
     }
 
     if (user && !user.emailVerified) {
