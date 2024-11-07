@@ -1,18 +1,11 @@
 import { Eye, EyeClosed, LoaderCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import validateField from "@/utils/fieldValidator";
 
 type LoginFormProps = {
   loginMode: boolean;
   setLoginMode: React.Dispatch<React.SetStateAction<boolean>>;
-  username?: string;
-  setUsername?: React.Dispatch<React.SetStateAction<string>>;
-  email: string;
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
-  password: string;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
   handleUserLogin: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
-  passwordType: "text" | "password";
-  setPasswordType: React.Dispatch<React.SetStateAction<"text" | "password">>;
   errorMessages: {
     usernameError: string;
     emailError: string;
@@ -25,25 +18,21 @@ type LoginFormProps = {
       passwordError: string;
     }>
   >;
-  validateField: (name: string, value: string) => string;
   loggingIn: boolean;
+  formValues: { username: string; email: string; password: string };
+  setFormValues: React.Dispatch<
+    React.SetStateAction<{ username: string; email: string; password: string }>
+  >;
 };
 
 const LoginForm = ({
   loginMode,
   setLoginMode,
-  username,
-  setUsername,
-  email,
-  setEmail,
-  password,
-  setPassword,
+  formValues,
+  setFormValues,
   handleUserLogin,
-  passwordType,
-  setPasswordType,
   errorMessages,
   setErrorMessages,
-  validateField,
   loggingIn,
 }: LoginFormProps) => {
   const [focusFromBlur, setFocusFromBlur] = useState<{
@@ -55,15 +44,19 @@ const LoginForm = ({
     email: false,
     password: false,
   });
+  const [passwordType, setPasswordType] = useState<"password" | "text">(
+    "password"
+  );
+
+  useEffect(() => {
+    setPasswordType("password");
+    setErrorMessages({ usernameError: "", emailError: "", passwordError: "" });
+  }, [loginMode]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    if (setUsername) {
-      if (name === "username") setUsername(value);
-    }
-    if (name === "email") setEmail(value);
-    if (name === "password") setPassword(value);
+    setFormValues((prev) => ({ ...prev, [name]: value }));
 
     if (focusFromBlur[name as keyof typeof focusFromBlur]) {
       setErrorMessages((prev) => ({
@@ -93,7 +86,7 @@ const LoginForm = ({
             placeholder="Username"
             className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border dark:border-[#2f2f2f] border-[#AAA] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
             name="username"
-            value={username}
+            value={formValues.username}
             onChange={handleInputChange}
             onBlur={handleFocusBlur}
             required
@@ -111,7 +104,7 @@ const LoginForm = ({
           placeholder="Email"
           className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border dark:border-[#2f2f2f] border-[#AAA] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
           name="email"
-          value={email}
+          value={formValues.email}
           onChange={handleInputChange}
           onBlur={handleFocusBlur}
           required
@@ -128,13 +121,13 @@ const LoginForm = ({
             placeholder="Password"
             className="w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border dark:border-[#2f2f2f] border-[#AAA] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2"
             name="password"
-            value={password}
+            value={formValues.password}
             onChange={handleInputChange}
             onBlur={handleFocusBlur}
             required
           />
           <span
-            className={`absolute cursor-pointer right-5 top-1/2 -translate-y-1/2 ${password.trim().length <= 0 && "hidden"} hidden group-focus:block group-hover:block`}
+            className={`absolute cursor-pointer right-5 top-1/2 -translate-y-1/2 ${formValues.password.trim().length <= 0 && "hidden"} hidden group-focus:block group-hover:block`}
           >
             <Eye
               className={`text-faded-gray ${passwordType === "text" && "hidden"}`}

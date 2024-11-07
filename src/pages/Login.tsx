@@ -1,19 +1,19 @@
 import LoginForm from "@/components/form/LoginForm";
 import useSystemTheme from "@/hooks/useSystemTheme";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState, useLayoutEffect } from "react";
+import { useEffect, useState } from "react";
 import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import validateField from "@/utils/fieldValidator";
 import { useMutation } from "@tanstack/react-query";
 
 const Login = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
-  const [passwordType, setPasswordType] = useState<"password" | "text">(
-    "password"
-  );
+  const [formValues, setFormValues] = useState<{
+    email: string;
+    password: string;
+    username: string;
+  }>({ username: "", email: "", password: "" });
+
   const [loginMode, setLoginMode] = useState<boolean>(true);
   const [errorMessages, setErrorMessages] = useState<{
     usernameError: string;
@@ -27,11 +27,6 @@ const Login = () => {
   const [isDarkMode] = useSystemTheme();
   const { user, login, signUp } = useAuth();
   const navigate = useNavigate();
-
-  useLayoutEffect(() => {
-    setPasswordType("password");
-    setErrorMessages({ usernameError: "", emailError: "", passwordError: "" });
-  }, [loginMode]);
 
   const loginMutation = useMutation({
     mutationFn: async ({
@@ -69,9 +64,9 @@ const Login = () => {
       emailError: string;
       passwordError: string;
     } = {
-      usernameError: validateField("username", username),
-      emailError: validateField("email", email),
-      passwordError: validateField("password", password),
+      usernameError: validateField("username", formValues.username),
+      emailError: validateField("email", formValues.email),
+      passwordError: validateField("password", formValues.password),
     };
 
     setErrorMessages(newErrors);
@@ -97,9 +92,15 @@ const Login = () => {
 
     try {
       if (loginMode) {
-        loginMutation.mutate({ email, password });
+        loginMutation.mutate({
+          email: formValues.email,
+          password: formValues.password,
+        });
       } else {
-        signUpMutation.mutate({ email, password });
+        signUpMutation.mutate({
+          email: formValues.email,
+          password: formValues.password,
+        });
       }
     } catch (e) {
       console.error(e);
@@ -182,16 +183,11 @@ const Login = () => {
               <LoginForm
                 loginMode={loginMode}
                 setLoginMode={setLoginMode}
-                email={email}
-                setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
+                formValues={formValues}
+                setFormValues={setFormValues}
                 handleUserLogin={handleUserLogin}
-                passwordType={passwordType}
-                setPasswordType={setPasswordType}
                 errorMessages={errorMessages}
                 setErrorMessages={setErrorMessages}
-                validateField={validateField}
                 loggingIn={loginMutation.isPending}
               />
             </motion.div>
@@ -203,18 +199,11 @@ const Login = () => {
               <LoginForm
                 loginMode={loginMode}
                 setLoginMode={setLoginMode}
-                username={username}
-                setUsername={setUsername}
-                email={email}
-                setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
+                formValues={formValues}
+                setFormValues={setFormValues}
                 handleUserLogin={handleUserLogin}
-                passwordType={passwordType}
-                setPasswordType={setPasswordType}
                 errorMessages={errorMessages}
                 setErrorMessages={setErrorMessages}
-                validateField={validateField}
                 loggingIn={signUpMutation.isPending}
               />
             </motion.div>
