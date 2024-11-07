@@ -35,8 +35,13 @@ const authErrorHandler = (
     case AuthErrorCodes.NETWORK_REQUEST_FAILED:
       showToast(
         "Network Error",
-
         "A network error occurred. Please check your internet connection."
+      );
+      break;
+    case AuthErrorCodes.TOKEN_EXPIRED:
+      showToast(
+        "Error",
+        "The current account has been altered or deleted. Please create a new account."
       );
       break;
     default:
