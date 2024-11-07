@@ -1,7 +1,7 @@
 import LoginForm from "@/components/form/LoginForm";
 import useSystemTheme from "@/hooks/useSystemTheme";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useLayoutEffect } from "react";
 import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -27,7 +27,7 @@ const Login = () => {
   const [loggingIn, setLoggingIn] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setPasswordType("password");
     setErrorMessages({ usernameError: "", emailError: "", passwordError: "" });
   }, [loginMode]);
@@ -53,7 +53,7 @@ const Login = () => {
     setLoggingIn(true);
     try {
       await signUp(email, password);
-    } catch(e) {
+    } catch (e) {
       console.error(e);
     } finally {
       setLoggingIn(false);

@@ -4,14 +4,12 @@ import { connectAuthEmulator, getAuth } from "firebase/auth";
 // firebase configuration object
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "telegram-web-app-7f668.firebaseapp.com",
-  projectId: "telegram-web-app-7f668",
-  storageBucket: "telegram-web-app-7f668.appspot.com",
-  messagingSenderId: "367614671098",
-  appId: "1:367614671098:web:22c3c866eca551ad47f143",
-  measurementId: "G-XP8CZ9S0EQ",
+  authDomain: "telegram-clone-dev.firebaseapp.com",
+  projectId: "telegram-clone-dev",
+  storageBucket: "telegram-clone-dev.firebasestorage.app",
+  messagingSenderId: "277458868452",
+  appId: "1:277458868452:web:24c6296acf19f51aab74f1",
 };
-
 // init app
 const app = initializeApp(firebaseConfig);
 

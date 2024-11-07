@@ -1,12 +1,12 @@
 import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 
 const Home = () => {
   const { user, isAuthLoading } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!user) {
       navigate("/login");
     }

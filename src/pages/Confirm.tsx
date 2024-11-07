@@ -2,7 +2,7 @@ import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import useCustomToaster from "@/hooks/useCustomToaster";
 import { AuthErrorCodes, sendEmailVerification } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useLayoutEffect } from "react";
 import { MdOutlineEdit } from "react-icons/md";
 import { LoaderCircle } from "lucide-react";
 
@@ -55,7 +55,7 @@ const Confirm = () => {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!user) {
       navigate("/login");
     }
