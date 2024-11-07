@@ -28,7 +28,7 @@ const Confirm = () => {
       );
     } catch (e) {
       console.error(e);
-      authErrorHandler(e);
+      authErrorHandler(e, showToast);
     } finally {
       setResending(false);
     }

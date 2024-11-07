@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
       }
     } catch (e) {
       console.error(e);
-      authErrorHandler(e);
+      authErrorHandler(e, showToast);
     }
   };
 
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: Children): React.ReactNode => {
       }
     } catch (e) {
       console.error(e);
-      authErrorHandler(e);
+      authErrorHandler(e, showToast);
     }
   };
 

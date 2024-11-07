@@ -1,9 +1,10 @@
 import { AuthErrorCodes } from "firebase/auth";
 import useCustomToaster from "@/hooks/useCustomToaster";
 
-const authErrorHandler = (e: unknown) => {
-  const { showToast } = useCustomToaster();
-
+const authErrorHandler = (
+  e: unknown,
+  showToast: (title: string, description: string, className?: string) => void
+) => {
   if (!(e instanceof Error) || !("code" in e)) {
     showToast("Error", "An error occurred. Please try again.");
     return;
