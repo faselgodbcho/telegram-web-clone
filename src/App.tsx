@@ -1,8 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
 import { Toaster } from "@/components/ui/toaster";
-import Confirm from "./pages/Confirm";
-import Home from "./pages/Home";
+import { Home, Confirm, Login, NotFound } from "@/pages";
 import useAuth from "@/hooks/useAuth";
 
 const App = () => {
@@ -21,6 +19,7 @@ const App = () => {
         <Route path="/confirm" element={<Confirm />} />
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       <Toaster />
