@@ -1,5 +1,5 @@
 import { MdDehaze, MdSearch, MdClear } from "react-icons/md";
-import { useState } from "react";
+import { useState, useLayoutEffect, useEffect } from "react";
 import {
   Settings as SettingsIcon,
   MoonStar as MoonStarIcon,
@@ -8,11 +8,31 @@ import {
   BriefcaseBusiness as BriefcaseIcon,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import useSystemTheme from "@/hooks/useSystemTheme";
 
 const SidebarHeader = () => {
   const [searchPhrase, setSearchPhrase] = useState<string>("");
   const [displayDropdown, setDisplayDropdown] = useState<boolean>(false);
   const [toggleDarkMode, setToggleDarkMode] = useState<boolean>(false);
+  const [isDarkMode] = useSystemTheme();
+  const [userTheme, setUserTheme] = useLocalStorage<"dark" | "light">(
+    "userTGTheme",
+    isDarkMode ? "dark" : "light"
+  );
+
+  useLayoutEffect(() => {
+    if (userTheme) {
+      setToggleDarkMode(userTheme === "dark" ? true : false);
+    } else {
+      setToggleDarkMode(isDarkMode ? true : false);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.className = toggleDarkMode ? "dark" : "light";
+    setUserTheme(toggleDarkMode ? "dark" : "light");
+  }, [toggleDarkMode]);
 
   return (
     <div className="px-4 py-2 flex gap-4 w-full border-b dark:border-[#121212]/70 border-text-faded-gray pb-4">
@@ -30,14 +50,14 @@ const SidebarHeader = () => {
         <div
           className={`z-10 absolute shadow-lg ${displayDropdown ? "scale-100 origin-top-left transition" : "scale-0"} w-[220px] px-1 py-2 dark:bg-[#242425]/50 backdrop-blur-2xl backdrop-saturate-150 rounded-lg bg-primary-light border border-black/20`}
         >
-          <div className="flex items-center gap-4 px-4 py-1 mb-2 rounded transition-colors dark:hover:bg-white/5 hover:bg-black/5 dark:active:bg-white/10 active:bg-black/10  cursor-pointer">
+          <div className="flex items-center gap-4 px-4 py-1 mb-1 rounded transition-colors dark:hover:bg-white/5 hover:bg-black/5 dark:active:bg-white/10 active:bg-black/10  cursor-pointer">
             <SettingsIcon
               className="dark:text-white text-primary-dark/80"
               size={19}
             />
             <span className="text-[15px] font-medium">Settings</span>
           </div>
-          <div className="flex items-center gap-4 px-4 py-1 mb-2 rounded transition-colors dark:hover:bg-white/5 hover:bg-black/5 dark:active:bg-white/10 active:bg-black/10  cursor-pointer">
+          <div className="flex items-center gap-4 px-4 py-1 mb-1 rounded transition-colors dark:hover:bg-white/5 hover:bg-black/5 dark:active:bg-white/10 active:bg-black/10  cursor-pointer">
             <MoonStarIcon
               size={19}
               className="dark:text-white text-primary-dark/80"
@@ -54,7 +74,6 @@ const SidebarHeader = () => {
                   checked={toggleDarkMode}
                   onCheckedChange={() => {
                     setToggleDarkMode((prev) => {
-                      localStorage.setItem("theme", !prev + "");
                       return !prev;
                     });
                   }}
@@ -63,21 +82,21 @@ const SidebarHeader = () => {
               </label>
             </div>
           </div>
-          <div className="flex items-center gap-4 px-4 py-1 mb-2 rounded transition-colors dark:hover:bg-white/5 hover:bg-black/5 dark:active:bg-white/10 active:bg-black/10  cursor-pointer">
+          <div className="flex items-center gap-4 px-4 py-1 mb-1 rounded transition-colors dark:hover:bg-white/5 hover:bg-black/5 dark:active:bg-white/10 active:bg-black/10  cursor-pointer">
             <BugIcon
               size={19}
               className="dark:text-white text-primary-dark/80"
             />
             <span className="text-[15px] font-medium">Report a bug</span>
           </div>
-          <div className="flex items-center gap-4 px-4 py-1 mb-2 rounded transition-colors dark:hover:bg-white/5 hover:bg-black/5 dark:active:bg-white/10 active:bg-black/10  cursor-pointer">
+          <div className="flex items-center gap-4 px-4 py-1 mb-1 rounded transition-colors dark:hover:bg-white/5 hover:bg-black/5 dark:active:bg-white/10 active:bg-black/10  cursor-pointer">
             <CodeIcon
               size={19}
               className="dark:text-white text-primary-dark/80"
             />
             <span className="text-[15px] font-medium">Source Code</span>
           </div>
-          <div className="flex items-center gap-4 px-4 py-1 mb-2 rounded transition-colors dark:hover:bg-white/5 hover:bg-black/5 dark:active:bg-white/10 active:bg-black/10  cursor-pointer">
+          <div className="flex items-center gap-4 px-4 py-1 mb-1 rounded transition-colors dark:hover:bg-white/5 hover:bg-black/5 dark:active:bg-white/10 active:bg-black/10  cursor-pointer">
             <BriefcaseIcon
               size={19}
               className="dark:text-white text-primary-dark/80"

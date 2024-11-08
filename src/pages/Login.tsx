@@ -6,6 +6,7 @@ import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import validateField from "@/utils/fieldValidator";
 import { useMutation } from "@tanstack/react-query";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const Login = () => {
   const [formValues, setFormValues] = useState<{
@@ -25,8 +26,28 @@ const Login = () => {
     passwordError: "",
   });
   const [isDarkMode] = useSystemTheme();
+  const [userTheme] = useLocalStorage<"dark" | "light">(
+    "userTGTheme",
+    isDarkMode ? "dark" : "light"
+  );
+  const [tgImgSrc, setTgImgSrc] = useState<string>("");
+
   const { user, login, signUp } = useAuth();
   const navigate = useNavigate();
+
+  useLayoutEffect(() => {
+    if (userTheme) {
+      setTgImgSrc(
+        userTheme === "dark"
+          ? "/images/telegram-dark.svg"
+          : "/images/telegram-light.svg"
+      );
+    } else {
+      setTgImgSrc(
+        isDarkMode ? "/images/telegram-dark.svg" : "/images/telegram-light.svg"
+      );
+    }
+  }, []);
 
   useLayoutEffect(() => {
     if (user && user.emailVerified) {
@@ -154,14 +175,7 @@ const Login = () => {
     <div className="w-full min-h-screen px-4 select-none min-[1450px]:flex items-center justify-center">
       <div className="max-w-[360px] w-full mx-auto pt-12">
         <div className="max-w-[160px] mx-auto">
-          <img
-            src={
-              isDarkMode
-                ? "/images/telegram-dark.svg"
-                : "/images/telegram-light.svg"
-            }
-            className="w-full"
-          />
+          <img src={tgImgSrc} className="w-full" />
         </div>
 
         <h2 className="text-3xl font-medium mt-8 text-center">
