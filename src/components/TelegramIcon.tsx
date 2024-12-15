@@ -13,6 +13,7 @@ export default function TelegramIcon() {
       className="w-full"
       width={160}
       height={160}
+      priority
     />
   ) : (
     <Image
@@ -21,6 +22,7 @@ export default function TelegramIcon() {
       className="w-full"
       width={160}
       height={160}
+      priority
     />
   );
 }

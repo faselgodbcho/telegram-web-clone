@@ -1,3 +1,5 @@
+import AuthForm from "@/components/AuthForm";
+
 export default function SignUp() {
-  return <div>sign up page</div>;
+  return <AuthForm type="sign-up" />;
 }
