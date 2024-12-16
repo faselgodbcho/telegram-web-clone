@@ -42,7 +42,10 @@ export default function AuthForm({ type }: AuthFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6 max-sm:p-2"
+      >
         <h2 className="text-3xl font-medium mt-8 text-center">
           {type === "sign-in" ? "Sign in to Telegram" : "Sign up to Telegram"}
         </h2>
