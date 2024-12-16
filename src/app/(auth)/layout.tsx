@@ -11,9 +11,9 @@ export default function AuthLayout({
         <div className="max-w-[160px] mx-auto pt-12">
           <TelegramIcon />
         </div>
-      </div>
 
-      {children}
+        {children}
+      </div>
     </main>
   );
 }

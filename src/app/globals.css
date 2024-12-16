@@ -64,11 +64,12 @@ body {
   }
 }
 
-/* @layer base {
-  * {
-    @apply border-border;
+@layer base {
+  .tg-input {
+    @apply w-full p-[13px] ps-[20px] focus:ps-[19px] focus:p-[12px] text-lg outline-none rounded-xl bg-transparent border dark:border-[#2f2f2f] border-[#AAA] dark:hover:border-secondary-dark dark:focus:border-secondary-dark hover:border-secondary-light focus:border-2;
   }
-  body {
-    @apply bg-background text-foreground;
+
+  .tg-error-message {
+    @apply text-red-500 mt-2 !text-sm ps-2;
   }
-} */
+}
