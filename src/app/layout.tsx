@@ -16,14 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Telegram Web Clone",
     description: "A minimalistic telegram web clone",
-    images: [
-      {
-        url: "https://telegram-web-clone-mu.vercel.app/assets/images/telegram-open-graph-image.avif",
-        width: 1200,
-        height: 630,
-        alt: "Telegram Web Logo",
-      },
-    ],
+
   },
 };
 
