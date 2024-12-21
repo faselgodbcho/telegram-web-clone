@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Telegram Web Clone",
   description:
     "A web application that replicates the features of Telegram, allowing users to chat in real time.",
-  metadataBase: new URL("https://telegram-web-clone-fasel.vercel.app"),
+  metadataBase: new URL("https://telegram-web-clone-mu.vercel.app"),
   openGraph: {
     title: "Telegram Web Clone",
     description: "A minimalistic telegram web clone",
